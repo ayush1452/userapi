@@ -43,6 +43,15 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
+      # Step 5: Run OWASP Dependency-Check
+      - name: OWASP Dependency-Check
+        run: |
+          mvn org.owasp:dependency-check-maven:check -Dformat=ALL
+
+      # Step 6: Upload SonarCloud report
+      - name: Transform Dependency-Check Report
+        run: python3 transform_owasp_report.py
+
       # Step 5: Build and Analyze with SonarCloud
       - name: Build and Analyze
         env:
@@ -53,9 +62,6 @@ jobs:
             -Dsonar.projectKey=ayush1452_userapi \
             -Dsonar.organization=ayush1452 \
             -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }}
+            -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+            -Dsonar.externalIssuesReportPaths=target/dependency-check-sonar-report.json
 
-      # Step 6: Run OWASP Dependency-Check
-      - name: OWASP Dependency-Check
-        run: |
-          mvn org.owasp:dependency-check-maven:check -Dformat=ALL
