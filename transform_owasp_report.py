@@ -1,5 +1,4 @@
 import json
-import os
 
 # Input and output file paths
 input_file = "target/dependency-check-report.json"
@@ -9,10 +8,10 @@ output_file = "target/dependency-check-sonar-report.json"
 with open(input_file, "r") as f:
     data = json.load(f)
 
-# Create SonarQube issues report structure
+# Create SonarCloud-compatible issues report
 sonar_report = {"issues": []}
 
-# Iterate through OWASP findings and transform them
+# Iterate through OWASP findings
 for dependency in data.get("dependencies", []):
     for vulnerability in dependency.get("vulnerabilities", []):
         sonar_issue = {

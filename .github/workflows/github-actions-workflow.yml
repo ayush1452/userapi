@@ -62,6 +62,6 @@ jobs:
             -Dsonar.projectKey=ayush1452_userapi \
             -Dsonar.organization=ayush1452 \
             -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
+            -Dsonar.token=${{ secrets.SONAR_TOKEN }} \
             -Dsonar.externalIssuesReportPaths=target/dependency-check-sonar-report.json
 
