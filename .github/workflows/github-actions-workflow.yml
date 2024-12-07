@@ -58,20 +58,4 @@ jobs:
       # Step 6: Run OWASP Dependency-Check
       - name: OWASP Dependency-Check
         run: |
-          rm -rf $(pwd)/odc-data
-          docker run --rm \
-            -v $(pwd):/src \
-            -v $(pwd)/odc-data:/usr/share/dependency-check/data \
-            -v $(pwd)/odc-reports:/report \
-            owasp/dependency-check \
-            --project userapi \
-            --scan /src \
-            --format HTML \
-            --out /report
-
-      # Step 7: Upload Dependency-Check Report
-      - name: Upload Dependency Check Report
-        uses: actions/upload-artifact@v3
-        with:
-          name: dependency-check-report
-          path: odc-reports/dependency-check-report.html
+          mvn org.owasp:dependency-check-maven:check -Dformat=ALL
