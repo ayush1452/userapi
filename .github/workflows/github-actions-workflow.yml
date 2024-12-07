@@ -46,7 +46,7 @@ jobs:
       # Step 5: Run OWASP Dependency-Check
       - name: OWASP Dependency-Check
         run: |
-          mvn org.owasp:dependency-check-maven:check -Dformat=ALL
+          mvn org.owasp:dependency-check-maven:check -Dformat=JSON
 
       # Step 6: Upload SonarCloud report
       - name: Transform Dependency-Check Report
