@@ -48,12 +48,11 @@ jobs:
         run: |
           echo ${{ secrets.GHCR_PAT }} | docker login ghcr.io -u ayush1452 --password-stdin
 
-      # Step 6: Start Dependency-Track Docker Container
+      # Step 6: Download and Start Dependency-Track Using Docker Compose
       - name: Start Dependency-Track
         run: |
-          docker run -d --name dependency-track \
-            -p 8081:8081 \
-            ghcr.io/dependencytrack/bundle:latest
+          curl -LO https://dependencytrack.org/docker-compose.yml
+          docker-compose up -d
 
       # Step 7: Wait for Dependency-Track to Be Ready
       - name: Wait for Dependency-Track to Be Ready
@@ -91,8 +90,7 @@ jobs:
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.token=${{ secrets.SONAR_TOKEN }}
           
-      # Step 11: Stop Dependency-Track
+      # Step 9: Stop Dependency-Track
       - name: Stop Dependency-Track
         run: |
-          docker stop dependency-track
-          docker rm dependency-track
+          docker-compose down
