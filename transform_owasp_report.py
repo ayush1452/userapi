@@ -21,7 +21,7 @@ for dependency in data.get("dependencies", []):
             "type": "VULNERABILITY",
             "primaryLocation": {
                 "message": vulnerability.get("description", "No description available."),
-                "filePath": dependency.get("fileName", "unknown"),
+                "filePath": "pom.xml",  # Map vulnerabilities to a known file
                 "textRange": {
                     "startLine": 1,
                     "endLine": 1,
