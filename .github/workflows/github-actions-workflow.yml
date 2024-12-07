@@ -55,18 +55,22 @@ jobs:
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }}
 
-      # Step 6: OWASP Dependency-Check
+      # Step 6: Run OWASP Dependency-Check
       - name: OWASP Dependency-Check
-        uses: strategy/dc-action@v2
-        with:
-          format: ALL  # Output formats (e.g., HTML, XML, JSON)
-          project: userapi
-          scan: ./  # Path to scan
-          suppression-file: ./dependency-check-suppressions.xml  # Optional suppression file
+        run: |
+          docker run --rm \
+            -v $(pwd):/src \
+            -v $(pwd)/odc-data:/usr/share/dependency-check/data \
+            -v $(pwd)/odc-reports:/report \
+            owasp/dependency-check \
+            --project userapi \
+            --scan /src \
+            --format ALL \
+            --out /report
 
-      # Step 7: Upload the dependency report as artifact
+      # Step 7: Upload Dependency-Check Report
       - name: Upload Dependency Check Report
         uses: actions/upload-artifact@v3
         with:
           name: dependency-check-report
-          path: ./dependency-check-report.html
+          path: odc-reports/dependency-check-report.html
