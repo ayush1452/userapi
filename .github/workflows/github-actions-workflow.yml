@@ -48,7 +48,7 @@ jobs:
         run: |
           docker run -d --name dependency-track \
             -p 8081:8081 \
-            dependencytrack/bundle:latest
+            ghcr.io/dependencytrack/bundle:latest
 
       # Step 6: Wait for Dependency-Track to Be Ready
       - name: Wait for Dependency-Track to Be Ready
