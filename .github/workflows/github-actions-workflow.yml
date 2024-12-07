@@ -43,26 +43,31 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      # Step 5: Start Dependency-Track Docker Container
+      # Step 5: Authenticate with GHCR
+      - name: Authenticate with GHCR
+        run: |
+          echo ${{ secrets.GHCR_PAT }} | docker login ghcr.io -u ayush1452 --password-stdin
+
+      # Step 6: Start Dependency-Track Docker Container
       - name: Start Dependency-Track
         run: |
           docker run -d --name dependency-track \
             -p 8081:8081 \
             ghcr.io/dependencytrack/bundle:latest
 
-      # Step 6: Wait for Dependency-Track to Be Ready
+      # Step 7: Wait for Dependency-Track to Be Ready
       - name: Wait for Dependency-Track to Be Ready
         run: |
           for i in {1..20}; do
             curl -s -o /dev/null -w "%{http_code}" http://localhost:8081 || sleep 5;
           done
 
-      # Step 7: Generate CycloneDX SBOM
+      # Step 8: Generate CycloneDX SBOM
       - name: Generate CycloneDX SBOM
         run: |
           mvn org.cyclonedx:cyclonedx-maven-plugin:makeAggregateBom
 
-      # Step 8: Upload SBOM to Dependency-Track
+      # Step 9: Upload SBOM to Dependency-Track
       - name: Upload SBOM to Dependency-Track
         env:
           API_KEY: odt_ksLKa8QOYOaBW9qpay6Sv7qpgOfDp2xe  # Default Dependency-Track API key
@@ -74,7 +79,7 @@ jobs:
             -F "bom=@target/bom.xml" \
             http://localhost:8081/api/v1/bom
 
-      # Step 9: Build and Analyze with SonarCloud
+      # Step 10: Build and Analyze with SonarCloud
       - name: Build and Analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  # Required for PR decoration
@@ -86,7 +91,7 @@ jobs:
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.token=${{ secrets.SONAR_TOKEN }}
           
-      # Step 10: Stop Dependency-Track
+      # Step 11: Stop Dependency-Track
       - name: Stop Dependency-Track
         run: |
           docker stop dependency-track
