@@ -20,6 +20,11 @@ public class UserController {
     @Autowired
     UserService userService;
 
+    @GetMapping("/")
+    public String home() {
+        return "Welcome to the User Management API!";
+    }
+
     // Get all users
     @GetMapping
     public List<UserDTO> getAllUsers() {
@@ -39,11 +44,11 @@ public class UserController {
     @PostMapping
     public ResponseEntity<?> createUser(@Valid @RequestBody UserRequestDTO userRequest) {
         log.info("POST /api/users called");
-        if (userService.userRepository.existsByUsername(userRequest.getUsername())) {
+        if (userService.usernameExists(userRequest.getUsername())) {
             log.warn("Username {} is already taken", userRequest.getUsername());
             return ResponseEntity.badRequest().body("Username is already taken");
         }
-        if (userService.userRepository.existsByEmail(userRequest.getEmail())) {
+        if (userService.emailExists(userRequest.getEmail())) {
             log.warn("Email {} is already in use", userRequest.getEmail());
             return ResponseEntity.badRequest().body("Email is already in use");
         }
