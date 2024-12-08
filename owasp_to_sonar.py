@@ -1,78 +1,64 @@
-#!/usr/bin/env python3
 import json
 import sys
-import os
 
-if len(sys.argv) != 3:
-    print("Usage: python owasp_to_sonar.py <input_json> <output_json>")
-    sys.exit(1)
+# Define input and output file paths
+input_file = "dependency-check-report.json"
+output_file = "sonar-issues.json"
+associated_file = "pom.xml"
 
-input_file = sys.argv[1]
-output_file = sys.argv[2]
+# Load the OWASP Dependency-Check JSON report
+with open(input_file, "r") as f:
+    data = json.load(f)
 
-# Verify input file exists
-if not os.path.exists(input_file):
-    print(f"Error: Input file {input_file} does not exist")
-    sys.exit(1)
-
-try:
-    with open(input_file, 'r') as f:
-        data = json.load(f)
-except json.JSONDecodeError as e:
-    print(f"Error: Invalid JSON in input file: {e}")
-    sys.exit(1)
-
+# Initialize the rules and issues
+rules = []
 issues = []
 
-severity_map = {
-    "CRITICAL": "BLOCKER",
-    "HIGH": "CRITICAL",
-    "MEDIUM": "MAJOR",
-    "LOW": "MINOR",
-    "INFO": "INFO"
-}
+# Process dependencies and vulnerabilities
+for dependency in data.get("dependencies", []):
+    if "vulnerabilities" in dependency:
+        for vulnerability in dependency["vulnerabilities"]:
+            # Add a new rule if it doesn't already exist
+            rule_id = vulnerability.get("name", "unknown-rule")
+            if not any(rule["id"] == rule_id for rule in rules):
+                rules.append({
+                    "id": rule_id,
+                    "name": "Dependency Vulnerability",
+                    "description": vulnerability.get("description", "No description provided"),
+                    "engineId": "DependencyCheck",
+                    "cleanCodeAttribute": "SECURE",
+                    "impacts": [
+                        {
+                            "softwareQuality": "SECURITY",
+                            "severity": "HIGH" if vulnerability.get("severity") == "HIGH" else "MEDIUM"
+                        }
+                    ]
+                })
 
-# Add validation for required fields
-if 'dependencies' not in data:
-    print("Error: No 'dependencies' field found in input JSON")
-    sys.exit(1)
+            # Add the issue
+            issues.append({
+                "engineId": "DependencyCheck",
+                "ruleId": rule_id,
+                "primaryLocation": {
+                    "message": vulnerability.get("description", "No description provided"),
+                    "filePath": associated_file,
+                    "textRange": {
+                        "startLine": 1,
+                        "endLine": 1,
+                        "startColumn": 1,
+                        "endColumn": 80
+                    }
+                }
+            })
 
-for dep in data['dependencies']:
-    file_path = dep.get('fileName', 'unknown_file')
-    vulns = dep.get('vulnerabilities', [])
-
-    for v in vulns:
-        cve = v.get('name', 'Unknown-CVE')
-        description = v.get('description', 'No description available.')
-
-        # Handle nested source objects for description
-        if isinstance(description, dict) and 'description' in description:
-            description = description['description']
-
-        owasp_sev = v.get('severity', 'MEDIUM').upper()
-        sonar_sev = severity_map.get(owasp_sev, 'MAJOR')
-
-        issue = {
-            "engineId": "owasp-dependency-check",
-            "ruleId": cve,
-            "type": "VULNERABILITY",
-            "severity": sonar_sev,
-            "primaryLocation": {
-                "message": description,
-                "filePath": file_path
-            }
-        }
-        issues.append(issue)
-
-# Now wrap issues in an object
+# Create the final structure
 output_data = {
+    "rules": rules,
     "issues": issues
 }
 
-try:
-    with open(output_file, 'w') as out:
-        json.dump(output_data, out, indent=2)
-    print(f"Successfully converted {len(issues)} issues to Sonar format")
-except Exception as e:
-    print(f"Error writing output file: {e}")
-    sys.exit(1)
+# Write the output JSON file
+with open(output_file, "w", encoding="utf-8") as f:
+    json.dump(output_data, f, indent=4)
+
+print(f"SonarCloud-compatible JSON file written to {output_file}")
