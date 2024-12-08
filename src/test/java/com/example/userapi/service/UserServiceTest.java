@@ -8,6 +8,8 @@ import com.example.userapi.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -87,7 +89,7 @@ public class UserServiceTest {
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
             User savedUser = invocation.getArgument(0, User.class);
             // Use ReflectionTestUtils to set the private 'id' field
-            org.springframework.test.util.ReflectionTestUtils.setField(savedUser, "id", 2L);
+            ReflectionTestUtils.setField(savedUser, "id", 2L);
             return savedUser;
         });
 
@@ -102,7 +104,6 @@ public class UserServiceTest {
         verify(passwordEncoder, times(1)).encode("plainPassword");
         verify(userRepository, times(1)).save(any(User.class));
     }
-
 
     @Test
     void updateUserTest_Success() throws ResourceNotFoundException {
@@ -139,4 +140,29 @@ public class UserServiceTest {
         assertThrows(ResourceNotFoundException.class, () -> userService.deleteUser(2L));
         verify(userRepository, times(1)).findById(2L);
     }
+
+    @ParameterizedTest
+    @CsvSource({
+            "existingUser, true",
+            "newUser, false"
+    })
+    void testUsernameExists(String username, boolean expectedResult) {
+        when(userRepository.existsByUsername(username)).thenReturn(expectedResult);
+        boolean result = userService.usernameExists(username);
+        assertEquals(expectedResult, result, "usernameExists should return the expected result");
+        verify(userRepository, times(1)).existsByUsername(username);
+    }
+
+    @ParameterizedTest
+    @CsvSource({
+            "existing@example.com, true",
+            "new@example.com, false"
+    })
+    void testEmailExists(String email, boolean expectedResult) {
+        when(userRepository.existsByEmail(email)).thenReturn(expectedResult);
+        boolean result = userService.emailExists(email);
+        assertEquals(expectedResult, result, "emailExists should return the expected result");
+        verify(userRepository, times(1)).existsByEmail(email);
+    }
+
 }
