@@ -10,6 +10,14 @@ associated_file = "pom.xml"
 with open(input_file, "r") as f:
     data = json.load(f)
 
+# Read the associated file to calculate valid line lengths
+try:
+    with open(associated_file, "r") as f:
+        lines = f.readlines()
+except FileNotFoundError:
+    print(f"Error: The associated file '{associated_file}' was not found.")
+    sys.exit(1)
+
 # Initialize the rules and issues
 rules = []
 issues = []
@@ -35,6 +43,12 @@ for dependency in data.get("dependencies", []):
                     ]
                 })
 
+            # Dynamically calculate valid textRange
+            start_line = 1  # Example: Issue starts at line 1
+            end_line = 1
+            start_column = 1
+            end_column = min(80, len(lines[start_line - 1])) if len(lines) >= start_line else 1
+
             # Add the issue
             issues.append({
                 "engineId": "DependencyCheck",
@@ -43,10 +57,10 @@ for dependency in data.get("dependencies", []):
                     "message": vulnerability.get("description", "No description provided"),
                     "filePath": associated_file,
                     "textRange": {
-                        "startLine": 1,
-                        "endLine": 1,
-                        "startColumn": 1,
-                        "endColumn": 80
+                        "startLine": start_line,
+                        "endLine": end_line,
+                        "startColumn": start_column,
+                        "endColumn": end_column
                     }
                 }
             })
