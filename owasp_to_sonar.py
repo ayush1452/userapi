@@ -26,7 +26,7 @@ for dependency in data.get("dependencies", []):
                     "name": "Dependency Vulnerability",
                     "description": vulnerability.get("description", "No description provided"),
                     "engineId": "DependencyCheck",
-                    "cleanCodeAttribute": "SECURE",
+                    "cleanCodeAttribute": "LAWFUL",  # Replace with a valid value
                     "impacts": [
                         {
                             "softwareQuality": "SECURITY",
