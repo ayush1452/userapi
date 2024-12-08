@@ -17,7 +17,6 @@ import java.util.Map;
 @Slf4j
 public class GlobalExceptionHandler {
 
-    // Handle custom exceptions
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(
             ResourceNotFoundException ex, WebRequest request) {
@@ -27,13 +26,11 @@ public class GlobalExceptionHandler {
                 ex.getMessage()
         );
 
-        // Log the exception
         log.warn("Resource not found: {}", ex.getMessage());
 
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
-    // Handle validation errors
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
@@ -50,15 +47,11 @@ public class GlobalExceptionHandler {
                 "Validation failed: " + errors.toString()
         );
 
-        errorResponse.setMessage(errors.toString());
-
-        // Log the validation errors
         log.warn("Validation failed: {}", errors);
 
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
-    // Handle other exceptions
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleAllExceptions(
             Exception ex, WebRequest request) {
@@ -68,7 +61,6 @@ public class GlobalExceptionHandler {
                 "An unexpected error occurred"
         );
 
-        // Log the exception using the logging framework
         log.error("An unexpected error occurred", ex);
 
         return new ResponseEntity<>(error, HttpStatus.INTERNAL_SERVER_ERROR);
