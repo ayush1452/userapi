@@ -2,7 +2,7 @@ import json
 import sys
 
 # Define input and output file paths
-input_file = "dependency-check-report.json"
+input_file = "target/dependency-check-report/dependency-check-report.json"
 output_file = "sonar-issues.json"
 associated_file = "pom.xml"
 
