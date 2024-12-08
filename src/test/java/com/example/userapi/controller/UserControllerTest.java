@@ -65,6 +65,13 @@ public class UserControllerTest
     }
 
     @Test
+    void homeTest() throws Exception {
+        mockMvc.perform(get("/api/users/"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("Welcome to the User Management API!"));
+    }
+
+    @Test
     void getAllUsersTest() throws Exception {
         when(userService.getAllUsers()).thenReturn(Collections.singletonList(userDTO));
         mockMvc.perform(get("/api/users"))
