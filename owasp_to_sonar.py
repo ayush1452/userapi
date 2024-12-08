@@ -2,11 +2,11 @@ import json
 import sys
 
 # Define input and output file paths
-input_file = "target/dependency-check-report/dependency-check-report.json"
-output_file = "sonar-issues.json"
-associated_file = "pom.xml"
+input_file = "target/dependency-check-report/dependency-check-report.json"  # OWASP Dependency-Check JSON input
+output_file = "sonar-issues.json"  # SonarCloud-compatible JSON output
+associated_file = "pom.xml"  # File to associate issues (e.g., pom.xml for Maven projects)
 
-# Load the OWASP Dependency-Check JSON report
+# Load OWASP Dependency-Check JSON report
 with open(input_file, "r") as f:
     data = json.load(f)
 
@@ -47,7 +47,7 @@ for dependency in data.get("dependencies", []):
             start_line = 1  # Example: Issue starts at line 1
             end_line = 1
             start_column = 1
-            end_column = min(80, len(lines[start_line - 1])) if len(lines) >= start_line else 1
+            end_column = min(80, len(lines[start_line - 1].rstrip()))  # Trim trailing whitespace and calculate length
 
             # Add the issue
             issues.append({
@@ -71,7 +71,7 @@ output_data = {
     "issues": issues
 }
 
-# Write the output JSON file
+# Write the SonarCloud-compatible JSON file
 with open(output_file, "w", encoding="utf-8") as f:
     json.dump(output_data, f, indent=4)
 
