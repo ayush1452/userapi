@@ -100,3 +100,21 @@ src
             │   └── UserRepository.java              // Data access layer for User entity
             └── service
                 └── UserService.java                 // Business logic for user operations
+```
+
+## Getting Started
+
+### Prerequisites
+- **Java 17+**
+- **Maven**
+
+---
+
+## Installation & Run
+
+### Clone the repository:
+1. Clone the project to your local machine:
+   ```bash
+   git clone https://github.com/ayush1452/userapi.git
+   cd userapi
+   ```
