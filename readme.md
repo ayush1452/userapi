@@ -113,8 +113,12 @@ src
 ## Installation & Run
 
 ### Clone the repository:
-1. Clone the project to your local machine:
+1. **Fork the Project**:
+   - Click on the "**Fork**" button at the top-right corner of the repository page on GitHub to create a copy of the project under your own GitHub account.
+
+2. **Clone the Repository**:
+   - After forking, clone the repository to your local machine:
    ```bash
-   git clone https://github.com/ayush1452/userapi.git
-   cd userapi
+   git clone https://github.com/your-username/your-forked-repo.git
+   cd your-forked-repo
    ```
