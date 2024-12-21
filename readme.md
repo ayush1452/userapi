@@ -122,3 +122,36 @@ src
    git clone https://github.com/your-username/your-forked-repo.git
    cd your-forked-repo
    ```
+
+---
+
+## Contributing
+
+Contributions are welcome!
+
+To contribute:
+
+1. Fork the repository.
+2. Create a new branch:
+   ```bash
+   git checkout -b feature/your-feature
+   ```
+3. Make your changes and test them.
+4. Commit and push:
+   ```bash
+   git push origin feature/your-feature
+   ```
+5. Open a pull request describing your changes.
+
+---
+## License
+
+This project is licensed under the [MIT License](https://opensource.org/licenses/MIT).
+
+---
+
+## Contact
+
+For questions or issues, please open an issue in the repository.
+
+Thank you for **checking out this project!** Feel free to reach out if you have any questions or suggestions.
