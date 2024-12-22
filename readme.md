@@ -123,6 +123,29 @@ src
    cd your-forked-repo
    ```
 
+3. **Build the Project:**
+   ```bash
+   mvn clean install
+   ```
+4. **Run the Application:**
+   ```bash
+   mvn spring-boot:run
+   ```
+   Access the app at: http://localhost:8080
+
+
+### H2 Database Console (Optional)
+
+- URL: http://localhost:8080/h2-console
+- JDBC URL: jdbc:h2:mem:usersdb
+- Username: sa (no password needed)
+
+Use this console to inspect database tables and data.
+
+---
+
+
+
 ---
 
 ## Contributing
