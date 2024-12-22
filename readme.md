@@ -144,6 +144,45 @@ Use this console to inspect database tables and data.
 
 ---
 
+## API Documentation & Testing
+
+### Swagger UI
+
+Access the Swagger UI at:
+- http://localhost:8080/swagger-ui/index.html
+
+You can:
+
+- View available endpoints
+- See request/response models
+- Test API calls interactively
+
+
+### Sample API Calls
+
+**Create a New User** (POST `/api/users`):
+
+```json
+{
+  "username": "johndoe",
+  "password": "password123",
+  "email": "john.doe@example.com",
+  "firstName": "John",
+  "lastName": "Doe"
+}
+```
+**Expected Response (200 OK)** :
+
+```json
+{
+   "id": 1,
+   "username": "johndoe",
+   "email": "john.doe@example.com",
+   "firstName": "John",
+   "lastName": "Doe"
+}
+```
+
 
 
 ---
