@@ -211,11 +211,49 @@ curl -X POST http://localhost:8080/api/users \
         "firstName":"Jane",
         "lastName":"Doe"
       }'
-
 ```
----
 
+#### Update a User
 
+**Endpoint:**
+```http
+PUT /api/users/{id}
+```
+
+**Request Body:**
+```json
+{
+  "username": "johndoe",
+  "password": "newpassword123",
+  "email": "john.doe@example.com",
+  "firstName": "John",
+  "lastName": "Doe Updated"
+}
+```
+
+**cURL Command:**
+```bash
+curl -X PUT http://localhost:8080/api/users/1 \
+  -H 'Content-Type: application/json' \
+  -d '{
+        "username": "johndoe",
+        "password": "newpassword123",
+        "email": "john.doe@example.com",
+        "firstName": "John",
+        "lastName": "Doe Updated"
+      }'
+```
+
+**Response Example:**
+```json
+{
+  "id": 1,
+  "username": "johndoe",
+  "email": "john.doe@example.com",
+  "firstName": "John",
+  "lastName": "Doe Updated"
+}
+```
 
 ---
 
