@@ -182,6 +182,38 @@ You can:
    "lastName": "Doe"
 }
 ```
+**Get All Users** (GET `/api/users`): **Expected Response (200 OK)**:
+
+```json
+[
+  {
+    "id": 1,
+    "username": "johndoe",
+    "email": "john.doe@example.com",
+    "firstName": "John",
+    "lastName": "Doe"
+  }
+]
+```
+**Using cURL**:
+
+```bash
+# Get all users
+curl -X GET http://localhost:8080/api/users
+
+# Create a user
+curl -X POST http://localhost:8080/api/users \
+  -H 'Content-Type: application/json' \
+  -d '{
+        "username":"janedoe",
+        "password":"securePass123",
+        "email":"jane.doe@example.com",
+        "firstName":"Jane",
+        "lastName":"Doe"
+      }'
+
+```
+---
 
 
 
