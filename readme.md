@@ -1,43 +1,5 @@
 # User Management API
 
-A RESTful API for managing user accounts, built with **Spring Boot**, **Spring Data JPA**, **H2 in-memory database**, **Spring Security** (for password encoding), and **Springdoc OpenAPI** for interactive API documentation.
-
-This application demonstrates best practices in software development, including:
-
-- Layered Architecture (Controller → Service → Repository)
-- Data Validation & DTOs for secure and flexible data transfer
-- Global Exception Handling for consistent error responses
-- Secure Password Handling with BCrypt
-- Comprehensive Logging and Clear Documentation
-- Interactive API Documentation via Swagger UI
-
----
-
-## Key Features
-
-1. **CRUD Operations**: Create, read, update, and delete user accounts.
-2. **Validation & Error Handling**:
-    - User input is validated using annotations (`@NotBlank`, `@Email`, `@Size`, etc.).
-    - A global exception handler returns well-structured error responses.
-3. **Data Transfer Objects (DTOs)**:
-    - `UserRequestDTO` for input, ensuring clients cannot set the `id`.
-    - `UserDTO` for output, hiding sensitive information like passwords.
-4. **Password Security**:
-    - Uses `BCryptPasswordEncoder` to hash passwords before persisting.
-5. **In-memory Database**:
-    - H2 is used for simplicity, enabling quick setup and testing.
-    - Database schema auto-updates on application start.
-6. **Swagger/OpenAPI Integration**:
-    - Self-documented endpoints accessible via a web UI.
-    - Easily test endpoints and view request/response models.
-7. **Logging**:
-    - Uses SLF4J with Logback for debugging and monitoring.
-    - Configurable log levels for different environments.
-
----
-
-# User Management API
-
 A RESTful API for managing users, built with **Spring Boot**, **Spring Data JPA**, an **H2 in-memory database**, **Spring Security** (for password encoding), and **Springdoc OpenAPI** for interactive API documentation.
 
 This project follows best practices, including:
