@@ -37,6 +37,12 @@ public class UserServiceTest {
     private User user;
     private UserRequestDTO userRequestDTO;
 
+    /**
+     * Sets up test data and configures mocks for UserService tests.
+     *
+     * - Initializes a User entity and a UserRequestDTO with test data.
+     * - Configures mock behavior for UserRepository and PasswordEncoder.
+     */
     @BeforeEach
     void setUp() {
         user = new User();
@@ -55,6 +61,11 @@ public class UserServiceTest {
         userRequestDTO.setLastName("User");
     }
 
+    /**
+     * Tests the getAllUsers method to ensure it retrieves all users from the repository.
+     *
+     * - Verifies the returned list contains the expected UserDTOs.
+     */
     @Test
     void getAllUsersTest() {
         when(userRepository.findAll()).thenReturn(List.of(user));
@@ -64,6 +75,12 @@ public class UserServiceTest {
         verify(userRepository, times(1)).findAll();
     }
 
+    /**
+     * Tests the getUserById method for a valid user ID.
+     *
+     * - Verifies the returned UserDTO matches the expected user details.
+     * @throws ResourceNotFoundException If the user is not found.
+     */
     @Test
     void getUserByIdTest_Success() throws ResourceNotFoundException {
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -73,6 +90,11 @@ public class UserServiceTest {
         verify(userRepository, times(1)).findById(1L);
     }
 
+    /**
+     * Tests the getUserById method for an invalid user ID.
+     *
+     * - Ensures a ResourceNotFoundException is thrown.
+     */
     @Test
     void getUserByIdTest_NotFound() {
         when(userRepository.findById(2L)).thenReturn(Optional.empty());
@@ -80,31 +102,35 @@ public class UserServiceTest {
         verify(userRepository, times(1)).findById(2L);
     }
 
+    /**
+     * Tests the createUser method for a valid request.
+     *
+     * - Verifies the User entity is saved correctly and the returned UserDTO matches the expected details.
+     */
     @Test
     void createUserTest() {
-        // Mock password encoding
         when(passwordEncoder.encode("plainPassword")).thenReturn("encodedPassword");
-
-        // Mock repository save: When a user is saved, set its ID to mimic DB behavior
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> {
             User savedUser = invocation.getArgument(0, User.class);
-            // Use ReflectionTestUtils to set the private 'id' field
             ReflectionTestUtils.setField(savedUser, "id", 2L);
             return savedUser;
         });
-
         UserDTO result = userService.createUser(userRequestDTO);
-
         assertEquals("newuser", result.getUsername());
         assertEquals("new@example.com", result.getEmail());
 
         // The returned UserDTO should now have the ID that we set via reflection
         assertEquals(2L, result.getId());
-
         verify(passwordEncoder, times(1)).encode("plainPassword");
         verify(userRepository, times(1)).save(any(User.class));
     }
 
+    /**
+     * Tests the updateUser method for a valid request.
+     *
+     * - Verifies the User entity is updated correctly and the returned UserDTO matches the updated details.
+     * @throws ResourceNotFoundException If the user is not found.
+     */
     @Test
     void updateUserTest_Success() throws ResourceNotFoundException {
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -120,6 +146,11 @@ public class UserServiceTest {
         verify(userRepository, times(1)).save(user);
     }
 
+    /**
+     * Tests the updateUser method for an invalid user ID.
+     *
+     * - Ensures a ResourceNotFoundException is thrown.
+     */
     @Test
     void updateUserTest_NotFound() {
         when(userRepository.findById(2L)).thenReturn(Optional.empty());
@@ -127,6 +158,12 @@ public class UserServiceTest {
         verify(userRepository, times(1)).findById(2L);
     }
 
+    /**
+     * Tests the deleteUser method for a valid user ID.
+     *
+     * - Ensures the User entity is deleted successfully.
+     * @throws ResourceNotFoundException If the user is not found.
+     */
     @Test
     void deleteUserTest_Success() throws ResourceNotFoundException {
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -134,6 +171,11 @@ public class UserServiceTest {
         verify(userRepository, times(1)).delete(user);
     }
 
+    /**
+     * Tests the deleteUser method for an invalid user ID.
+     *
+     * - Ensures a ResourceNotFoundException is thrown.
+     */
     @Test
     void deleteUserTest_NotFound() {
         when(userRepository.findById(2L)).thenReturn(Optional.empty());
@@ -141,6 +183,11 @@ public class UserServiceTest {
         verify(userRepository, times(1)).findById(2L);
     }
 
+    /**
+     * Tests the usernameExists method.
+     *
+     * - Verifies the method correctly identifies whether a username exists in the repository.
+     */
     @ParameterizedTest
     @CsvSource({
             "existingUser, true",
@@ -153,6 +200,11 @@ public class UserServiceTest {
         verify(userRepository, times(1)).existsByUsername(username);
     }
 
+    /**
+     * Tests the emailExists method.
+     *
+     * - Verifies the method correctly identifies whether an email exists in the repository.
+     */
     @ParameterizedTest
     @CsvSource({
             "existing@example.com, true",
