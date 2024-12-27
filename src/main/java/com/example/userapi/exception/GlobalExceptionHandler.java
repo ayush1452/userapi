@@ -13,10 +13,22 @@ import org.springframework.validation.FieldError;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Global exception handler for the application.
+ * This class provides centralized exception handling across all @RequestMapping methods.
+ */
 @ControllerAdvice
 @Slf4j
 public class GlobalExceptionHandler {
 
+    /**
+     * Handles ResourceNotFoundException.
+     * This method is called when a ResourceNotFoundException is thrown in the application.
+     *
+     * @param ex      The ResourceNotFoundException that was thrown.
+     * @param request The current request.
+     * @return ResponseEntity containing an ErrorResponse object and HTTP status NOT_FOUND.
+     */
     @ExceptionHandler(ResourceNotFoundException.class)
     public ResponseEntity<ErrorResponse> handleResourceNotFoundException(
             ResourceNotFoundException ex, WebRequest request) {
@@ -31,6 +43,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(error, HttpStatus.NOT_FOUND);
     }
 
+    /**
+     * Handles MethodArgumentNotValidException.
+     * This method is called when there are validation errors in the request.
+     *
+     * @param ex The MethodArgumentNotValidException that was thrown.
+     * @return ResponseEntity containing an ErrorResponse object with validation errors and HTTP status BAD_REQUEST.
+     */
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ErrorResponse> handleValidationExceptions(
             MethodArgumentNotValidException ex) {
@@ -52,6 +71,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
+    /**
+     * Handles all other exceptions not specifically handled by other exception handlers.
+     *
+     * @param ex      The exception that was thrown.
+     * @param request The current request.
+     * @return ResponseEntity containing an ErrorResponse object and HTTP status INTERNAL_SERVER_ERROR.
+     */
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleAllExceptions(
             Exception ex, WebRequest request) {

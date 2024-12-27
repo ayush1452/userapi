@@ -13,6 +13,10 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service class for managing user-related business logic.
+ * Provides functionality for creating, reading, updating, and deleting users.
+ */
 @Service
 @Slf4j
 public class UserService {
@@ -23,7 +27,11 @@ public class UserService {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    // Get all users
+    /**
+     * Retrieves a list of all users.
+     *
+     * @return List of UserDTO representing all users.
+     */
     public List<UserDTO> getAllUsers() {
         log.debug("Fetching all users");
         return userRepository.findAll().stream()
@@ -31,7 +39,13 @@ public class UserService {
                 .collect(Collectors.toList());
     }
 
-    // Get user by ID
+    /**
+     * Retrieves a user by their unique ID.
+     *
+     * @param id The ID of the user to retrieve.
+     * @return UserDTO representing the user.
+     * @throws ResourceNotFoundException if no user is found with the given ID.
+     */
     public UserDTO getUserById(Long id) throws ResourceNotFoundException {
         log.debug("Fetching user with id {}", id);
         User user = userRepository.findById(id)
@@ -42,7 +56,12 @@ public class UserService {
         return convertToDTO(user);
     }
 
-    // Create new user
+    /**
+     * Creates a new user in the system.
+     *
+     * @param userRequest Data for the user to be created.
+     * @return UserDTO representing the created user.
+     */
     public UserDTO createUser(UserRequestDTO userRequest) {
         User user = new User();
 
@@ -61,7 +80,14 @@ public class UserService {
         return convertToDTO(savedUser);
     }
 
-    // Update user
+    /**
+     * Updates an existing user's information.
+     *
+     * @param id          The ID of the user to update.
+     * @param userRequest Updated user data.
+     * @return UserDTO representing the updated user.
+     * @throws ResourceNotFoundException if no user is found with the given ID.
+     */
     public UserDTO updateUser(Long id, UserRequestDTO userRequest) throws ResourceNotFoundException {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> {
@@ -81,7 +107,12 @@ public class UserService {
         return convertToDTO(updatedUser);
     }
 
-    // Delete user
+    /**
+     * Deletes a user by their unique ID.
+     *
+     * @param id The ID of the user to delete.
+     * @throws ResourceNotFoundException if no user is found with the given ID.
+     */
     public void deleteUser(Long id) throws ResourceNotFoundException {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> {
@@ -92,7 +123,12 @@ public class UserService {
         log.debug("Deleted user with id {}", id);
     }
 
-    // Helper method to convert User to UserDTO
+    /**
+     * Converts a User entity to a UserDTO.
+     *
+     * @param user The User entity to convert.
+     * @return UserDTO representation of the user.
+     */
     private UserDTO convertToDTO(User user) {
         UserDTO userDTO = new UserDTO();
 
