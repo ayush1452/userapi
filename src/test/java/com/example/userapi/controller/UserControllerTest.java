@@ -46,6 +46,13 @@ public class UserControllerTest
     private UserDTO userDTO;
     private UserRequestDTO userRequest;
 
+    /**
+     * Initializes test data and configures MockMvc for testing the UserController.
+     *
+     * - Sets up mock responses for the UserService.
+     * - Creates a MockMvc instance for testing REST endpoints.
+     * - Initializes test data for UserDTO and UserRequestDTO.
+     */
     @BeforeEach
     void setUp() {
         mockMvc = MockMvcBuilders.standaloneSetup(userController).setControllerAdvice(new GlobalExceptionHandler()).build();
@@ -64,6 +71,11 @@ public class UserControllerTest
         userRequest.setEmail("new@example.com");
     }
 
+    /**
+     * Tests the home endpoint to verify the welcome message.
+     *
+     * @throws Exception If an error occurs during request execution.
+     */
     @Test
     void homeTest() throws Exception {
         mockMvc.perform(get("/api/users/"))
@@ -71,6 +83,12 @@ public class UserControllerTest
                 .andExpect(content().string("Welcome to the User Management API!"));
     }
 
+    /**
+     * Tests the getAllUsers endpoint to ensure it retrieves all users correctly.
+     *
+     * - Verifies the returned JSON matches the expected structure and values.
+     * @throws Exception If an error occurs during request execution.
+     */
     @Test
     void getAllUsersTest() throws Exception {
         when(userService.getAllUsers()).thenReturn(Collections.singletonList(userDTO));
@@ -79,6 +97,12 @@ public class UserControllerTest
                 .andExpect(jsonPath("$[0].username").value("testuser"));
     }
 
+    /**
+     * Tests the getUserById endpoint for a valid user ID.
+     *
+     * - Verifies the returned UserDTO matches the expected user details.
+     * @throws Exception If an error occurs during request execution.
+     */
     @Test
     void getUserByIdTest_Success() throws Exception {
         when(userService.getUserById(1L)).thenReturn(userDTO);
@@ -88,6 +112,12 @@ public class UserControllerTest
                 .andExpect(jsonPath("$.username").value("testuser"));
     }
 
+    /**
+     * Tests the getUserById endpoint for an invalid user ID.
+     *
+     * - Ensures a 404 NOT_FOUND response is returned with the correct error message.
+     * @throws Exception If an error occurs during request execution.
+     */
     @Test
     void getUserByIdTest_NotFound() throws Exception {
         when(userService.getUserById(2L)).thenThrow(new ResourceNotFoundException("User not found"));
@@ -97,6 +127,12 @@ public class UserControllerTest
                 .andExpect(jsonPath("$.message").value("User not found"));
     }
 
+    /**
+     * Tests the createUser endpoint for a valid request.
+     *
+     * - Verifies the returned UserDTO contains the expected details.
+     * @throws Exception If an error occurs during request execution.
+     */
     @Test
     void createUserTest_Success() throws Exception {
         when(userService.usernameExists("newuser")).thenReturn(false);
@@ -110,7 +146,12 @@ public class UserControllerTest
                 .andExpect(jsonPath("$.username").value("testuser"));
     }
 
-
+    /**
+     * Tests the createUser endpoint when the username is already taken.
+     *
+     * - Ensures a 400 BAD_REQUEST response is returned with the correct error message.
+     * @throws Exception If an error occurs during request execution.
+     */
     @Test
     void createUserTest_UsernameTaken() throws Exception {
         when(userService.usernameExists("newuser")).thenReturn(true);
@@ -122,6 +163,12 @@ public class UserControllerTest
                 .andExpect(content().string("Username is already taken"));
     }
 
+    /**
+     * Tests the createUser endpoint when the email is already in use.
+     *
+     * - Ensures a 400 BAD_REQUEST response is returned with the correct error message.
+     * @throws Exception If an error occurs during request execution.
+     */
     @Test
     void createUserTest_EmailTaken() throws Exception {
         when(userService.usernameExists("newuser")).thenReturn(false);
@@ -134,6 +181,12 @@ public class UserControllerTest
                 .andExpect(content().string("Email is already in use"));
     }
 
+    /**
+     * Tests the updateUser endpoint for a valid request.
+     *
+     * - Verifies the returned UserDTO contains the updated details.
+     * @throws Exception If an error occurs during request execution.
+     */
     @Test
     void updateUserTest_Success() throws Exception {
         when(userService.updateUser(eq(1L), any(UserRequestDTO.class))).thenReturn(userDTO);
@@ -145,6 +198,12 @@ public class UserControllerTest
                 .andExpect(jsonPath("$.username").value("testuser"));
     }
 
+    /**
+     * Tests the updateUser endpoint for an invalid user ID.
+     *
+     * - Ensures a 404 NOT_FOUND response is returned with the correct error message.
+     * @throws Exception If an error occurs during request execution.
+     */
     @Test
     void updateUserTest_NotFound() throws Exception {
         when(userService.updateUser(eq(2L), any(UserRequestDTO.class))).thenThrow(new ResourceNotFoundException("User not found"));
@@ -156,6 +215,12 @@ public class UserControllerTest
                 .andExpect(jsonPath("$.message").value("User not found"));
     }
 
+    /**
+     * Tests the deleteUser endpoint for a valid user ID.
+     *
+     * - Ensures the user is successfully deleted.
+     * @throws Exception If an error occurs during request execution.
+     */
     @Test
     void deleteUserTest_Success() throws Exception {
         mockMvc.perform(delete("/api/users/1"))
@@ -163,6 +228,12 @@ public class UserControllerTest
         Mockito.verify(userService, Mockito.times(1)).deleteUser(1L);
     }
 
+    /**
+     * Tests the deleteUser endpoint for an invalid user ID.
+     *
+     * - Ensures a 404 NOT_FOUND response is returned with the correct error message.
+     * @throws Exception If an error occurs during request execution.
+     */
     @Test
     void deleteUserTest_NotFound() throws Exception {
         doThrow(new ResourceNotFoundException("User not found")).when(userService).deleteUser(2L);
